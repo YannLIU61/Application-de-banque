@@ -1,5 +1,6 @@
 <?php
 require_once('myModel.php');
+include('outil/xssFilter.php');
 session_start();
 // URL de redirection par défaut (si pas d'action ou action non reconnue)
 $url_redirect = "index.php";
@@ -60,7 +61,7 @@ if (isset($_REQUEST['action'])) {
         }
     } else if ($_REQUEST['action'] == 'sendmsg') {
         /* ======== MESSAGE ======== */
-        addMessage($_REQUEST['to'], $_SESSION["connected_user"]["id_user"], $_REQUEST['sujet'], $_REQUEST['corps']);
+        addMessage($_REQUEST['to'], $_SESSION["connected_user"]["id_user"], xss_clean($_REQUEST['sujet']), xss_clean($_REQUEST['corps']));
         $url_redirect = "vw_messagerie.php?msg_ok";
     } else if ($_REQUEST['action'] == 'msglist') {
         /* ======== MESSAGE ======== */

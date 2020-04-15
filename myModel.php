@@ -14,9 +14,11 @@ function findUserByLoginPwd($login, $pwd)
     echo 'Erreur connection BDD (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error;
     $utilisateur = false;
   } else {
-    $req = "select nom,prenom,login,id_user,numero_compte,profil_user,solde_compte from users where login='$login' and mot_de_passe='$pwd'";
-    if (!$result = $mysqli->query($req)) {
-      echo 'Erreur requête BDD [' . $req . '] (' . $mysqli->errno . ') ' . $mysqli->error;
+    $stmt = $mysqli->prepare("select nom,prenom,login,id_user,numero_compte,profil_user,solde_compte from users where login=? and mot_de_passe=?");
+    $stmt->bind_param("ss", $login, $pwd);
+    $stmt->execute();
+    if (! $result = $stmt->get_result()) {
+      echo 'Erreur requête BDD [Login] (' . $stmt->errno . ') ' . $stmt->error;
       $utilisateur = false;
     } else {
       if ($result->num_rows === 0) {
@@ -26,6 +28,7 @@ function findUserByLoginPwd($login, $pwd)
       }
       $result->free();
     }
+    $stmt->close();
     $mysqli->close();
   }
 
@@ -37,7 +40,7 @@ function findAllClients()
 {
   $mysqli = getMySqliConnection();
 
-  $listeClients= array();
+  $listeClients = array();
 
   if ($mysqli->connect_error) {
     echo 'Erreur connection BDD (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error;
@@ -120,15 +123,17 @@ function findMessagesInbox($userid)
   if ($mysqli->connect_error) {
     echo 'Erreur connection BDD (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error;
   } else {
-    $req = "select id_msg,sujet_msg,corps_msg,u.nom,u.prenom from messages m, users u where m.id_user_from=u.id_user and id_user_to=" . $userid;
-    if (!$result = $mysqli->query($req)) {
-      echo 'Erreur requête BDD [' . $req . '] (' . $mysqli->errno . ') ' . $mysqli->error;
+    $stmt = $mysqli->prepare("select id_msg,sujet_msg,corps_msg,u.nom,u.prenom from messages m, users u where m.id_user_from=u.id_user and id_user_to=?");
+    $stmt->bind_param("i", $userid);
+    if (!$result = $stmt->execute()) {
+      echo 'Erreur requête BDD [Send Message] (' . $stmt->errno . ') ' . $stmt->error;
     } else {
       while ($unMessage = $result->fetch_assoc()) {
         $listeMessages[$unMessage['id_msg']] = $unMessage;
       }
       $result->free();
     }
+    $stmt->close();
     $mysqli->close();
   }
 
@@ -153,22 +158,22 @@ function addMessage($to, $from, $subject, $body)
 
 function transfertValidator($dest, $mt)
 {
-    $exist = false;
-    if ($dest == $_SESSION["connected_user"]["numero_compte"]) {
-        return "Operation forbidden!";
+  $exist = false;
+  if ($dest == $_SESSION["connected_user"]["numero_compte"]) {
+    return "Operation forbidden!";
+  }
+  if ($mt > $_SESSION["connected_user"]["solde_compte"]) {
+    return "Insufficient balance!!";
+  }
+  foreach ($_SESSION["listeUsers"] as $user) {
+    if ($dest == $user["id_user"]) {
+      $exist = true;
+      break;
     }
-    if ($mt > $_SESSION["connected_user"]["solde_compte"]) {
-        return "Insufficient balance!!";
-    }
-    foreach ($_SESSION["listeUsers"] as $user) {
-        if ($dest == $user["id_user"]) {
-            $exist = true;
-            break;
-        }
-    }
-    if (!$exist) {
-        return "Incorrect account number of consignee!";
-    }
+  }
+  if (!$exist) {
+    return "Incorrect account number of consignee!";
+  }
 
-    return null;
+  return null;
 }

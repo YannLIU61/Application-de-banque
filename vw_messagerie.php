@@ -43,10 +43,11 @@ if (!isset($_SESSION["connected_user"]) || $_SESSION["connected_user"] == "") {
                         </select>
                     </div>
                     <div class="field">
-                        <label>Sujet : </label><input type="text" size="20" name="sujet">
+                        <label>Sujet : </label><input type="text" size="30" name="sujet" maxlength="100">
                     </div>
                     <div class="field">
-                        <label>Message : </label><input type="text" size="40" name="corps">
+                        <label>Message : </label>
+                        <textarea name="corps" rows="10" cols="50"></textarea>
                     </div>
                     <button class="form-btn">Envoyer</button>
                     <?php
