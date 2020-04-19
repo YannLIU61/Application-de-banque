@@ -50,11 +50,19 @@ require_once("menu.php"); ?>
                         echo '<p>Message envoyé avec succès.</p>';
                     }
                     ?>
-                    <p><a href="myController.php?action=msglist&userid=<?php echo $_SESSION["connected_user"]["id_user"]; ?>">Mes messages reçus</a></p>
                 </div>
             </form>
         </article>
-
+        <br>
+        <article>
+            <form method="POST" action="myController.php">
+                <input type="hidden" name="action" value="msglist">
+                <input type="hidden" name="userid" value=<?php echo $_SESSION["connected_user"]["id_user"]; ?>>
+                <div class="fieldset">
+                    <button class="form-btn">Mes messages reçus</button>
+                </div>
+            </form>
+        </article>
     </section>
 
 </body>

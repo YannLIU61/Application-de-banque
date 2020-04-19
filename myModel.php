@@ -114,27 +114,24 @@ function transfert($dest, $src, $mt)
 }
 
 
-function findMessagesInbox($userid)
-{
+function findMessagesInbox($userid) {
   $mysqli = getMySqliConnection();
 
   $listeMessages = array();
 
   if ($mysqli->connect_error) {
-    echo 'Erreur connection BDD (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error;
+      echo 'Erreur connection BDD (' . $mysqli->connect_errno . ') '. $mysqli->connect_error;
   } else {
-    $stmt = $mysqli->prepare("select id_msg,sujet_msg,corps_msg,u.nom,u.prenom from messages m, users u where m.id_user_from=u.id_user and id_user_to=?");
-    $stmt->bind_param("i", $userid);
-    if (!$result = $stmt->execute()) {
-      echo 'Erreur requête BDD [Send Message] (' . $stmt->errno . ') ' . $stmt->error;
-    } else {
-      while ($unMessage = $result->fetch_assoc()) {
-        $listeMessages[$unMessage['id_msg']] = $unMessage;
+      $req="select id_msg,sujet_msg,corps_msg,u.nom,u.prenom from messages m, users u where m.id_user_from=u.id_user and id_user_to=".$userid;
+      if (!$result = $mysqli->query($req)) {
+          echo 'Erreur requête BDD ['.$req.'] (' . $mysqli->errno . ') '. $mysqli->error;
+      } else {
+          while ($unMessage = $result->fetch_assoc()) {
+            $listeMessages[$unMessage['id_msg']] = $unMessage;
+          }
+          $result->free();
       }
-      $result->free();
-    }
-    $stmt->close();
-    $mysqli->close();
+      $mysqli->close();
   }
 
   return $listeMessages;

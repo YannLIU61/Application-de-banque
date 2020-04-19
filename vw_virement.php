@@ -41,6 +41,9 @@ require_once("menu.php"); ?>
                     <div class="field">
                         <label>Montant à transférer : </label><input type="number" size="10" name="montant">
                     </div>
+                    <div class="field">
+                        <label>Saisir votre mot de passe : </label><input type="password" size="10" name="mdp">
+                    </div>
                     <button class="form-btn">Transférer</button>
                     <?php
                     if (isset($_REQUEST["trf_ok"])) {
@@ -48,6 +51,9 @@ require_once("menu.php"); ?>
                     }
                     if (isset($_REQUEST["bad_mt"])) {
                         echo '<p style="color:red;">' . $_REQUEST["bad_mt"] . '</p>';
+                    }
+                    if (isset($_REQUEST["bad_mdp"])) {
+                        echo '<p style="color:red;"> Mot de passe incorrect!!!</p>';
                     }
                     ?>
                 </div>
