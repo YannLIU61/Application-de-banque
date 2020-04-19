@@ -1,11 +1,6 @@
 <?php
-session_start();
-if (!isset($_SESSION["connected_user"]) || $_SESSION["connected_user"] == "") {
-    // utilisateur non connect�
-    header('Location: vw_login.php');
-}
-?>
-<?php include("menu.php"); ?>
+require_once("header.php");
+require_once("menu.php"); ?>
 <!doctype html>
 <html lang="fr">
 
@@ -16,6 +11,9 @@ if (!isset($_SESSION["connected_user"]) || $_SESSION["connected_user"] == "") {
 </head>
 
 <body>
+    <header>
+        <h2>Fiche Client</h2>
+    </header>
     <section>
 
         <article>
@@ -37,7 +35,7 @@ if (!isset($_SESSION["connected_user"]) || $_SESSION["connected_user"] == "") {
                 </div>
             </div>
         </article>
-
+        <br>
         <article>
             <div class="fieldset">
                 <div class="fieldset_label">
@@ -51,12 +49,17 @@ if (!isset($_SESSION["connected_user"]) || $_SESSION["connected_user"] == "") {
                 </div>
             </div>
         </article>
+        <br>
         <article>
+        <form method="GET" action="vw_virement.php">
+                <input type="hidden" name="tfmode" value="client">
             <div class="fieldset">
                 <div class="fieldset_label">
-                    <span><a href="vw_virement.php"> Transférer à cet utilisateur</a></span>
+                    <span> Effectuer un virement</a></span>
                 </div>
+                <button class="form-btn">Transférer</button>
             </div>
+        </form>
         </article>
     </section>
 

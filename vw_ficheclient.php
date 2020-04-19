@@ -1,11 +1,6 @@
 <?php
-session_start();
-if (!isset($_SESSION["connected_user"]) || $_SESSION["connected_user"] == "") {
-    // utilisateur non connect�
-    header('Location:vw_login.php');
-}
-?>
-<?php include("menu.php"); ?>
+require_once("header.php");
+require_once("menu.php"); ?>
 <!doctype html>
 <html lang="fr">
 

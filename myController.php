@@ -1,5 +1,5 @@
 <?php
-require_once('myModel.php');
+include('myModel.php');
 include('outil/xssFilter.php');
 session_start();
 // URL de redirection par défaut (si pas d'action ou action non reconnue)
@@ -35,6 +35,8 @@ if (isset($_REQUEST['action'])) {
                     $_SESSION["connected_user"] = $utilisateur;
                     $_SESSION["listeUsers"] = findAllUsers();
                     $_SESSION["listClients"] = findAllClients();
+                    //Use session_regenerate_id () function to regenerate SESSION ID
+                    session_regenerate_id(true);
                     $url_redirect = "vw_accueil.php";
                 }
             }
@@ -50,7 +52,9 @@ if (isset($_REQUEST['action'])) {
             $url_redirect = "vw_virement.php?bad_mt=" . $bad_mt;
         } else {
             /* ======== TRANSFERT ======== */
-            $bad_mt = transfert($_REQUEST['destination'], $_SESSION["connected_user"]["numero_compte"], $_REQUEST['montant']);
+            /* Different transfer modes*/
+            isset($_REQUEST["from"]) ? $src = $_SESSION["infoClient"]["numero_compte"] : $src = $_SESSION["connected_user"]["numero_compte"];
+            $bad_mt = transfert($_REQUEST['destination'], $src, $_REQUEST['montant']);
             if ($bad_mt == null) {
                 $_SESSION["connected_user"]["solde_compte"] = $_SESSION["connected_user"]["solde_compte"] -  $_REQUEST['montant'];
                 $url_redirect = "vw_virement.php?trf_ok";

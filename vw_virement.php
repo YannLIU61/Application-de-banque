@@ -1,11 +1,6 @@
 <?php
-session_start();
-if (!isset($_SESSION["connected_user"]) || $_SESSION["connected_user"] == "") {
-    // utilisateur non connect�
-    header('Location: vw_login.php');
-}
-?>
-<?php include("menu.php"); ?>
+require_once("header.php");
+require_once("menu.php"); ?>
 <!doctype html>
 <html lang="fr">
 
@@ -17,18 +12,31 @@ if (!isset($_SESSION["connected_user"]) || $_SESSION["connected_user"] == "") {
 
 <body>
     <header>
-        <h2>Virement</h2>
+        <h2>Virement
+            <?php
+            if (isset($_GET["tfmode"])) {
+                echo 'depuis ' . $_SESSION["infoClient"]["nom"] . ' ' . $_SESSION["infoClient"]["prenom"] . '</p>';
+            } else {
+                echo 'depuis mon compte';
+            }
+            ?>
+        </h2>
     </header>
     <section>
         <article>
             <form method="POST" action="myController.php">
                 <input type="hidden" name="action" value="transfert">
+                <?php
+                if (isset($_GET["tfmode"])) {
+                    echo ' <input type="hidden" name="from" value="client">';
+                }
+                ?>
                 <div class="fieldset">
                     <div class="fieldset_label">
                         <span>Transférer de l'argent</span>
                     </div>
                     <div class="field">
-                        <label>N° compte destinataire : </label><input type="text" size="20" name="destination" value=<?php echo $_SESSION["infoClient"]["numero_compte"]; ?>>
+                        <label>N° compte destinataire : </label><input type="text" size="20" name="destination">
                     </div>
                     <div class="field">
                         <label>Montant à transférer : </label><input type="number" size="10" name="montant">
