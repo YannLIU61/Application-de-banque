@@ -12,6 +12,7 @@ if (isset($_REQUEST['action'])) {
         $t = time(); //Storing time in variable
         $diff = (time() - 600); // Here 600 mean 10 minutes 10*60
         $mysqli = getMySqliConnection();
+        //Create a table named "tbl_loginLimit" to save the connection failed log
         $result = mysqli_query($mysqli, "SELECT COUNT(*) FROM tbl_loginLimit WHERE ipAddress LIKE '$ip' 
           AND timeDiff > $diff"); //Fetching Data 
         $count = mysqli_fetch_array($result);
@@ -30,8 +31,6 @@ if (isset($_REQUEST['action'])) {
                     $url_redirect = "vw_login.php?badvalue";
                 } else {
                     // authentification réussie
-                    //If user login successful, delete his login log
-                    mysqli_query($mysqli, "DELETE FROM tbl_loginLimit WHERE ipAddress LIKE '::1'");
                     $_SESSION["connected_user"] = $utilisateur;
                     $_SESSION["listeUsers"] = findAllUsers();
                     $_SESSION["listClients"] = findAllClients();

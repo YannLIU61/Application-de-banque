@@ -52,7 +52,7 @@ require_once("menu.php"); ?>
         <br>
         <article>
         <form method="GET" action="vw_virement.php">
-                <input type="hidden" name="tfmode" value="client">
+            <input type="hidden" name="tfmode" value="client">
             <div class="fieldset">
                 <div class="fieldset_label">
                     <span> Effectuer un virement</a></span>
